@@ -26,6 +26,7 @@ export const Page: React.FC<PageProps> = ({
   page
 }) => (
   <div className="article-page">
+    <div className="nosto_page_type" style={{display: 'none' }}>other</div>
     <div
       className="article-page__header"
       style={headerImage ? { backgroundImage: `url(${headerImage})` } : null}

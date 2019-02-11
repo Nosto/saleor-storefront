@@ -75,6 +75,14 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
 
     return (
       <div className="product-page">
+        <div className="nosto_page_type" style={{display: 'none' }}>product</div>
+        <div className="nosto_product" style={{display: 'none' }}>
+          <div>{product.id}</div>
+          <div>{product.name}</div>
+          <div>{product.price.amount}</div>
+          <div>{product.price.currency}</div>
+          <div>{product.thumbnail2x.url}</div>
+        </div>
         <div className="container">
           <Breadcrumbs breadcrumbs={this.populateBreadcrumbs(product)} />
         </div>

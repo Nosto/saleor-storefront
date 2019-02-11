@@ -29,7 +29,7 @@ class View extends React.Component<
     validateStep: boolean;
   }
 > {
-  gateway: GatewaysEnum = GatewaysEnum.BRAINTREE;
+  gateway: GatewaysEnum = GatewaysEnum.DUMMY;
   state = {
     errors: {
       cvv: "",

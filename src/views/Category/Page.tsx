@@ -49,6 +49,8 @@ const Page: React.FC<PageProps> = ({
 
   return (
     <div className="category">
+      <div className="nosto_page_type" style={{display: 'none' }}>category</div>
+      <div className="nosto_category" style={{display: 'none' }}>{category.name}</div>
       <div
         className="category__header"
         style={

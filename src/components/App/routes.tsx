@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import { CheckoutLogin, NotFound } from "..";
 import { ArticlePage } from "../../views/Article";
 import { CartPage } from "../../views/Cart";
+import { OrderPage } from "../../views/Order";
 import { CategoryPage } from "../../views/Category";
 import { CollectionPage } from "../../views/Collection";
 import { HomePage } from "../../views/Home";
@@ -18,6 +19,7 @@ export const productUrl = `${baseUrl}product/:slug([a-z-0-9]+)/:id([0-9]+)/`;
 export const cartUrl = `${baseUrl}cart/:token?/`;
 export const checkoutLoginUrl = `${baseUrl}login/`;
 export const pageUrl = `${baseUrl}page/:slug/`;
+export const orderUrl = `${baseUrl}order/:slug/`;
 
 export const Routes: React.FC = () => (
   <Switch>
@@ -29,6 +31,7 @@ export const Routes: React.FC = () => (
     <Route path={cartUrl} component={CartPage} />
     <Route path={checkoutLoginUrl} component={CheckoutLogin} />
     <Route path={pageUrl} component={ArticlePage} />
+    <Route path={orderUrl} component={OrderPage} />
     <Route component={NotFound} />
   </Switch>
 );
