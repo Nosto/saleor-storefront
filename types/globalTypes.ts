@@ -38,8 +38,8 @@ export interface AddressInput {
 }
 
 export interface CheckoutCreateInput {
-  lines?: (CheckoutLineInput | null)[] | null;
-  email?: string | null;
+  lines: (CheckoutLineInput | null)[];
+  email: string;
   shippingAddress?: AddressInput | null;
   billingAddress?: AddressInput | null;
 }

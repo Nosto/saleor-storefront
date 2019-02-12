@@ -25,6 +25,7 @@ export { default as SocialMediaIcon } from "./SocialMediaIcon";
 export { default as TextField } from "./TextField";
 export { default as UserProvider } from "./User";
 export { CartTable } from "./CartTable";
+export { OrderTable } from "./OrderTable";
 export {
   default as ShippingAddressForm,
   AddressType,

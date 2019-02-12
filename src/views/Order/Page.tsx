@@ -5,14 +5,9 @@ import { Link } from "react-router-dom";
 
 import { CheckoutContextInterface } from "../../checkout/context";
 import { baseUrl as checkoutUrl } from "../../checkout/routes";
-import { Button, CartTable, EmptyCart, Loader } from "../../components";
+import { Button, OrderTable, EmptyCart, Loader } from "../../components";
 import { checkoutLoginUrl } from "../../components/App/routes";
 import { CartInterface } from "../../components/CartProvider/context";
-import {
-  extractCartLines,
-  extractCheckoutLines,
-  getTotal
-} from "../../components/CartProvider/uitls";
 import {
   OverlayContextInterface,
   OverlayType
@@ -21,95 +16,45 @@ import { getShop_shop } from "../../components/ShopProvider/types/getShop";
 import { UserContext } from "../../components/User/context";
 import { maybe } from "../../core/utils";
 import { TypedProductVariantsQuery } from "../Product/queries";
+import { TypedOrderDetailsQuery } from "./queries";
+import { Order_order } from "./types/Order";
 
-interface PageProps {
-  checkout: CheckoutContextInterface;
-  overlay: OverlayContextInterface;
-  cart: CartInterface;
-  shop: getShop_shop;
-}
+class Page extends React.Component<{ order: Order_order }> {
 
-class Page extends React.Component<PageProps> {
-  shouldComponentUpdate(nextProps: PageProps) {
-    const {
-      cart: { errors, clearErrors },
-      overlay: { show }
-    } = nextProps;
-    const hasErrors = maybe(() => !!errors.length);
-
-    if (hasErrors) {
-      show(OverlayType.message, null, {
-        content: errors.map(err => err.message).join(", "),
-        status: "error",
-        title: "Error"
-      });
-      clearErrors();
-    }
-    return true;
-  }
   render() {
-    const {
-      shop: { geolocalization, defaultCountry },
-      checkout: {
-        checkout,
-        loading: checkoutLoading,
-        syncWithCart,
-        syncUserCheckout
-      },
-      cart: {
-        lines,
-        remove,
-        add,
-        errors,
-        subtract,
-        loading: cartLoading,
-        changeQuantity
-      }
-    } = this.props;
-
-    if ((!checkout && checkoutLoading) || syncWithCart || syncUserCheckout) {
-      return <Loader full />;
-    }
-
-    if (!lines.length) {
-      return <EmptyCart />;
-    }
-
-    const productTableProps = {
-      invalid: maybe(() => !!errors.length, false),
-      processing: cartLoading,
-    };
-    const locale = maybe(
-      () => geolocalization.country.code,
-      defaultCountry.code
-    );
+    const { order } = this.props;
 
     return (
-      <>
-        {checkout ? (
-          <CartTable
-            {...productTableProps}
-            lines={extractCheckoutLines(checkout.lines)}
-            subtotal={checkout.subtotalPrice.gross.localized}
-            deliveryCost={"$89.10"}
-            totalCost={"$146.99"}
-          />
-        ) : (
-          <TypedProductVariantsQuery
-            variables={{ ids: lines.map(line => line.variantId) }}
-          >
-            {({ data }) => {
-              return (
-                <CartTable
-                  {...productTableProps}
-                  lines={extractCartLines(data, lines, locale)}
-                  subtotal={getTotal(data, lines, locale)}
-                />
-              );
-            }}
-          </TypedProductVariantsQuery>
-        )}
-      </>
+      <div className="container order-page">
+        <div className="nosto_page_type" style={{display: 'none' }}>order</div>
+        <h1 className="checkout__header cart-page__header">Your Order</h1>
+          <div className="nosto_purchase_order" style={{display: 'none' }}>
+            <span className="order_number">{order.number}</span>
+            <div className="buyer">
+              <span className="email">{order.userEmail}</span>
+              <span className="first_name">{order.shippingAddress.firstName}</span>
+              <span className="last_name">{order.shippingAddress.lastName}</span>
+              <span className="marketing_permission">true</span>
+            </div>
+            <div className="purchased_items">
+              {order.lines.map((line, index) => (
+                <div className="line_item" key={"nosto_order" + index}>
+                  <span className="product_id">{line.id}</span>
+                  <span className="quantity">{line.quantity}</span>
+                  <span className="name">{line.productName}</span>
+                  <span className="unit_price">{line.unitPrice.gross.amount}</span>
+                  <span className="price_currency_code">{line.unitPrice.gross.currency}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+        <OrderTable
+          lines={order.lines}
+          subtotal={order.subtotal.gross.localized}
+          deliveryCost={order.shippingPrice.gross.localized}
+          totalCost={order.total.gross.localized}
+        />
+      </div>
     );
   }
 }

@@ -178,7 +178,7 @@ export interface getCheckout_checkout {
   billingAddress: getCheckout_checkout_billingAddress | null;
   shippingAddress: getCheckout_checkout_shippingAddress | null;
   email: string;
-  availableShippingMethods: (getCheckout_checkout_availableShippingMethods | null)[] | null;
+  availableShippingMethods: (getCheckout_checkout_availableShippingMethods | null)[];
   shippingMethod: getCheckout_checkout_shippingMethod | null;
   shippingPrice: getCheckout_checkout_shippingPrice | null;
   lines: (getCheckout_checkout_lines | null)[] | null;

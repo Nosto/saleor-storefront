@@ -186,7 +186,7 @@ export interface createCheckout_checkoutCreate_checkout {
   billingAddress: createCheckout_checkoutCreate_checkout_billingAddress | null;
   shippingAddress: createCheckout_checkoutCreate_checkout_shippingAddress | null;
   email: string;
-  availableShippingMethods: (createCheckout_checkoutCreate_checkout_availableShippingMethods | null)[] | null;
+  availableShippingMethods: (createCheckout_checkoutCreate_checkout_availableShippingMethods | null)[];
   shippingMethod: createCheckout_checkoutCreate_checkout_shippingMethod | null;
   shippingPrice: createCheckout_checkoutCreate_checkout_shippingPrice | null;
   lines: (createCheckout_checkoutCreate_checkout_lines | null)[] | null;

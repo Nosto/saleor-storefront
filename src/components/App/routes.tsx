@@ -19,7 +19,7 @@ export const productUrl = `${baseUrl}product/:slug([a-z-0-9]+)/:id([0-9]+)/`;
 export const cartUrl = `${baseUrl}cart/:token?/`;
 export const checkoutLoginUrl = `${baseUrl}login/`;
 export const pageUrl = `${baseUrl}page/:slug/`;
-export const orderUrl = `${baseUrl}order/:slug/`;
+export const orderUrl = `${baseUrl}order/:id/`;
 
 export const Routes: React.FC = () => (
   <Switch>
