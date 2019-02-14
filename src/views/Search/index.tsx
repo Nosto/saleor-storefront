@@ -28,7 +28,7 @@ import {
   updateQueryString
 } from "../../core/utils";
 import { TypedSearchProductsQuery } from "./queries";
-import SearchPage from "./SearchPage";
+import Page from "./Page";
 
 type SearchViewProps = RouteComponentProps<{}>;
 
@@ -123,7 +123,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                   }
 
                   return (
-                    <SearchPage onQueryChange={change} query={query}>
+                    <Page onQueryChange={change} query={query}>
                       {hasProducts && canDisplayFilters && (
                         <ProductFilters
                           attributes={data.attributes.edges.map(
@@ -149,7 +149,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                       {!hasProducts && (
                         <ProductsFeatured title="You might like" />
                       )}
-                    </SearchPage>
+                    </Page>
                   );
                 }}
               </DebounceChange>

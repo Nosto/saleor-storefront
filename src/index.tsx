@@ -20,6 +20,7 @@ import CartProvider from "./components/CartProvider";
 import { CartContext } from "./components/CartProvider/context";
 import { OverlayContext, OverlayType } from "./components/Overlay/context";
 import ShopProvider from "./components/ShopProvider";
+import NostoProvider from "./components/NostoProvider";
 import { UserContext } from "./components/User/context";
 import {
   authLink,
@@ -72,6 +73,7 @@ const startApp = async () => {
   render(
     <Router history={history}>
       <ApolloProvider client={apolloClient}>
+        <NostoProvider account="mwp2zpea">
         <ShopProvider>
           <OverlayProvider>
             <OverlayContext.Consumer>
@@ -121,6 +123,7 @@ const startApp = async () => {
             </OverlayContext.Consumer>
           </OverlayProvider>
         </ShopProvider>
+        </NostoProvider>
       </ApolloProvider>
     </Router>,
     document.getElementById("root")

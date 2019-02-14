@@ -4,7 +4,7 @@ import classNames from "classnames";
 import * as React from "react";
 import Media from "react-media";
 
-import { Breadcrumbs, CachedImage, ProductDescription } from "../../components";
+import { Breadcrumbs, CachedImage, ProductDescription, Placement } from "../../components";
 import { CartContext } from "../../components/CartProvider/context";
 import { generateCategoryUrl, generateProductUrl } from "../../core/utils";
 import GalleryCarousel from "./GalleryCarousel";
@@ -33,6 +33,14 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
   ];
 
   componentDidMount() {
+    window.nostojs = (cb) => {
+      (window.nostojs.q = window.nostojs.q || [])
+      .push(cb);
+    };
+
+    window.nostojs(api => api.loadRecommendations());
+    console.log(window.nostojs);
+
     if (this.showCarousel) {
       window.addEventListener("scroll", this.handleScroll, {
         passive: true
@@ -157,6 +165,9 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
             </Media>
           </div>
         </div>
+        <Placement id="productpage-nosto-1" />
+        <Placement id="productpage-nosto-2" />
+        <Placement id="productpage-nosto-3" />
         <OtherProducts products={product.category.products.edges} />
       </div>
     );

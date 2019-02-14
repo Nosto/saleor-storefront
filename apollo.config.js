@@ -1,5 +1,7 @@
 module.exports = {
   client: {
-    service: 'saleor'
+    service: {
+      localSchemaFile: './schema.graphql'
+    }
   }
 };
