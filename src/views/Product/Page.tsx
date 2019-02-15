@@ -33,13 +33,13 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
   ];
 
   componentDidMount() {
-    window.nostojs = (cb) => {
-      (window.nostojs.q = window.nostojs.q || [])
-      .push(cb);
-    };
-
+    if (!window.nostojs.q) {
+      window.nostojs = (cb) => {
+        (window.nostojs.q = window.nostojs.q || [])
+        .push(cb);
+      };
+    }
     window.nostojs(api => api.loadRecommendations());
-    console.log(window.nostojs);
 
     if (this.showCarousel) {
       window.addEventListener("scroll", this.handleScroll, {

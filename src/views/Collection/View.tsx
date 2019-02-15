@@ -14,7 +14,7 @@ import {
   parseQueryString,
   updateQueryString
 } from "../../core/utils";
-import { Page } from "./Page";
+import Page from "./Page";
 import { TypedCollectionProductsQuery } from "./queries";
 
 type ViewProps = RouteComponentProps<{

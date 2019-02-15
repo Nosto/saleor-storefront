@@ -18,10 +18,12 @@ class Page extends React.PureComponent<{
 }> {
 
   componentDidMount() {
-    window.nostojs = (cb) => {
-      (window.nostojs.q = window.nostojs.q || [])
-      .push(cb);
-    };
+    if (!window.nostojs.q) {
+      window.nostojs = (cb) => {
+        (window.nostojs.q = window.nostojs.q || [])
+        .push(cb);
+      };
+    }
 
     window.nostojs(api => api.loadRecommendations());
   }
