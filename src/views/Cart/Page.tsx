@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { CheckoutContextInterface } from "../../checkout/context";
 import { baseUrl as checkoutUrl } from "../../checkout/routes";
-import { Button, CartTable, EmptyCart, Loader } from "../../components";
+import { Button, CartTable, EmptyCart, Loader, Placement } from "../../components";
 import { checkoutLoginUrl } from "../../components/App/routes";
 import { CartInterface } from "../../components/CartProvider/context";
 import {
@@ -21,6 +21,7 @@ import { getShop_shop } from "../../components/ShopProvider/types/getShop";
 import { UserContext } from "../../components/User/context";
 import { maybe } from "../../core/utils";
 import { TypedProductVariantsQuery } from "../Product/queries";
+import { reloadNosto } from  "../../core/nosto/utils";
 
 interface PageProps {
   checkout: CheckoutContextInterface;
@@ -30,6 +31,7 @@ interface PageProps {
 }
 
 class Page extends React.Component<PageProps> {
+
   shouldComponentUpdate(nextProps: PageProps) {
     const {
       cart: { errors, clearErrors },
@@ -47,6 +49,11 @@ class Page extends React.Component<PageProps> {
     }
     return true;
   }
+
+  componentDidMount() {
+    reloadNosto();
+  }
+
   render() {
     const {
       shop: { geolocalization, defaultCountry },
@@ -121,6 +128,8 @@ class Page extends React.Component<PageProps> {
             )}
           </UserContext.Consumer>
         </div>
+        <Placement id="cartpage-nosto-1" />
+        <Placement id="cartpage-nosto-2" />
       </>
     );
   }

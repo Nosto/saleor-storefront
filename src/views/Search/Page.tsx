@@ -3,6 +3,7 @@ import "./scss/index.scss";
 import * as React from "react";
 
 import { TextField, Placement } from "../../components";
+import { reloadNosto } from  "../../core/nosto/utils";
 
 interface SearchPageProps {
   query: string;
@@ -12,14 +13,7 @@ interface SearchPageProps {
 class Page extends React.PureComponent<SearchPageProps> {
 
   componentDidMount() {
-    if (!window.nostojs.q) {
-      window.nostojs = (cb) => {
-        (window.nostojs.q = window.nostojs.q || [])
-        .push(cb);
-      };
-    }
-
-    window.nostojs(api => api.loadRecommendations());
+    reloadNosto();
   }
 
   render() {

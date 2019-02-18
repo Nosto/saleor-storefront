@@ -73,7 +73,7 @@ const startApp = async () => {
   render(
     <Router history={history}>
       <ApolloProvider client={apolloClient}>
-        <NostoProvider account="mwp2zpea">
+        <NostoProvider account="mtwjgzhr">
         <ShopProvider>
           <OverlayProvider>
             <OverlayContext.Consumer>

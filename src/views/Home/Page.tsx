@@ -8,6 +8,7 @@ import { Button, Loader, ProductsFeatured, Placement } from "../../components";
 import { ProductsList_categories } from "../../core/types/saleor";
 import { generateCategoryUrl } from "../../core/utils";
 import { ProductsList_shop_homepageCollection_backgroundImage } from "./types/ProductsList";
+import { reloadNosto } from  "../../core/nosto/utils";
 
 import noPhotoImg from "../../images/no-photo.svg";
 
@@ -18,14 +19,7 @@ class Page extends React.PureComponent<{
 }> {
 
   componentDidMount() {
-    if (!window.nostojs.q) {
-      window.nostojs = (cb) => {
-        (window.nostojs.q = window.nostojs.q || [])
-        .push(cb);
-      };
-    }
-
-    window.nostojs(api => api.loadRecommendations());
+    reloadNosto();
   }
 
   render() {

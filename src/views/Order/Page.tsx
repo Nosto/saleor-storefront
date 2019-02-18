@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { CheckoutContextInterface } from "../../checkout/context";
 import { baseUrl as checkoutUrl } from "../../checkout/routes";
-import { Button, OrderTable, EmptyCart, Loader } from "../../components";
+import { Button, OrderTable, EmptyCart, Loader, Placement } from "../../components";
 import { checkoutLoginUrl } from "../../components/App/routes";
 import { CartInterface } from "../../components/CartProvider/context";
 import {
@@ -18,8 +18,13 @@ import { maybe } from "../../core/utils";
 import { TypedProductVariantsQuery } from "../Product/queries";
 import { TypedOrderDetailsQuery } from "./queries";
 import { Order_order } from "./types/Order";
+import { reloadNosto } from  "../../core/nosto/utils";
 
 class Page extends React.Component<{ order: Order_order }> {
+
+  componentDidMount() {
+    reloadNosto();
+  }
 
   render() {
     const { order } = this.props;
@@ -54,6 +59,8 @@ class Page extends React.Component<{ order: Order_order }> {
           deliveryCost={order.shippingPrice.gross.localized}
           totalCost={order.total.gross.localized}
         />
+        <Placement id="thankyou-nosto-1" />
+        <Placement id="thankyou-nosto-2" />
       </div>
     );
   }

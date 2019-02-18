@@ -17,6 +17,7 @@ import {
   Category_category,
   Category_products
 } from "./types/Category";
+import { reloadNosto } from  "../../core/nosto/utils";
 
 interface PageProps {
   attributes: Category_attributes_edges_node[];
@@ -34,14 +35,7 @@ interface PageProps {
 class Page extends React.PureComponent<PageProps> {
 
   componentDidMount() {
-    if (!window.nostojs.q) {
-      window.nostojs = (cb) => {
-        (window.nostojs.q = window.nostojs.q || [])
-        .push(cb);
-      };
-    }
-
-    window.nostojs(api => api.loadRecommendations());
+    reloadNosto();
   }
 
   render() {

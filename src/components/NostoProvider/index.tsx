@@ -10,6 +10,7 @@ interface NostoProviderProps {
 declare global {
   interface Window {
       nostojs: any;
+      nosto: any;
   }
 }
 
@@ -33,7 +34,7 @@ export default class NostoProvider extends React.Component<
   componentDidMount () {
       const script = document.createElement("script");
       script.type = 'text/javascript';
-      script.src = "//connect.nosto.com/include/" + this.state.account;
+      script.src = "//localhost:9000/include/" + this.state.account;
       script.async = true;
       document.body.appendChild(script);
 

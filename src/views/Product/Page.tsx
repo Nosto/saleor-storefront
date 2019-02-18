@@ -10,6 +10,7 @@ import { generateCategoryUrl, generateProductUrl } from "../../core/utils";
 import GalleryCarousel from "./GalleryCarousel";
 import OtherProducts from "./Other";
 import { ProductDetails_product } from "./types/ProductDetails";
+import { reloadNosto } from  "../../core/nosto/utils";
 
 import noPhotoImg from "../../images/no-photo.svg";
 
@@ -33,13 +34,7 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
   ];
 
   componentDidMount() {
-    if (!window.nostojs.q) {
-      window.nostojs = (cb) => {
-        (window.nostojs.q = window.nostojs.q || [])
-        .push(cb);
-      };
-    }
-    window.nostojs(api => api.loadRecommendations());
+    reloadNosto();
 
     if (this.showCarousel) {
       window.addEventListener("scroll", this.handleScroll, {
@@ -85,11 +80,14 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
       <div className="product-page">
         <div className="nosto_page_type" style={{display: 'none' }}>product</div>
         <div className="nosto_product" style={{display: 'none' }}>
-          <div>{product.id}</div>
-          <div>{product.name}</div>
-          <div>{product.price.amount}</div>
-          <div>{product.price.currency}</div>
-          <div>{product.thumbnail2x.url}</div>
+          <span className="product_id">{product.id}</span>
+          <span className="name">{product.name}</span>
+
+          <span className="availability">{product.availability.available ? 'InStock' : 'OutOfStock'}</span>
+          <span className="image_url">{product.thumbnail2x.url}</span>
+          <span className="price">{product.price.amount}</span>
+          <span className="price_currency_code">{product.price.currency}</span>
+          <span className="category">{product.category.name}</span>
         </div>
         <div className="container">
           <Breadcrumbs breadcrumbs={this.populateBreadcrumbs(product)} />
