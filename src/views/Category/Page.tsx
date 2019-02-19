@@ -5,19 +5,19 @@ import * as React from "react";
 import {
   Breadcrumbs,
   extractBreadcrumbs,
+  Placement,
   ProductsFeatured,
-  ProductsList,
-  Placement
+  ProductsList
 } from "../../components";
 import { Filters, ProductFilters } from "../../components/ProductFilters";
 
+import { reloadNosto } from  "../../core/nosto/utils";
 import { maybe } from "../../core/utils";
 import {
   Category_attributes_edges_node,
   Category_category,
   Category_products
 } from "./types/Category";
-import { reloadNosto } from  "../../core/nosto/utils";
 
 interface PageProps {
   attributes: Category_attributes_edges_node[];

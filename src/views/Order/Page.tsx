@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { CheckoutContextInterface } from "../../checkout/context";
 import { baseUrl as checkoutUrl } from "../../checkout/routes";
-import { Button, OrderTable, EmptyCart, Loader, Placement } from "../../components";
+import { Button, EmptyCart, Loader, OrderTable, Placement } from "../../components";
 import { checkoutLoginUrl } from "../../components/App/routes";
 import { CartInterface } from "../../components/CartProvider/context";
 import {
@@ -14,11 +14,11 @@ import {
 } from "../../components/Overlay/context";
 import { getShop_shop } from "../../components/ShopProvider/types/getShop";
 import { UserContext } from "../../components/User/context";
+import { reloadNosto } from  "../../core/nosto/utils";
 import { maybe } from "../../core/utils";
 import { TypedProductVariantsQuery } from "../Product/queries";
 import { TypedOrderDetailsQuery } from "./queries";
 import { Order_order } from "./types/Order";
-import { reloadNosto } from  "../../core/nosto/utils";
 
 class Page extends React.Component<{ order: Order_order }> {
 

@@ -4,11 +4,11 @@ import classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import { Button, Loader, ProductsFeatured, Placement } from "../../components";
+import { Button, Loader, Placement, ProductsFeatured } from "../../components";
+import { reloadNosto } from  "../../core/nosto/utils";
 import { ProductsList_categories } from "../../core/types/saleor";
 import { generateCategoryUrl } from "../../core/utils";
 import { ProductsList_shop_homepageCollection_backgroundImage } from "./types/ProductsList";
-import { reloadNosto } from  "../../core/nosto/utils";
 
 import noPhotoImg from "../../images/no-photo.svg";
 

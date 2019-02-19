@@ -2,7 +2,7 @@ import "./scss/index.scss";
 
 import * as React from "react";
 
-import { TextField, Placement } from "../../components";
+import { Placement, TextField } from "../../components";
 import { reloadNosto } from  "../../core/nosto/utils";
 
 interface SearchPageProps {

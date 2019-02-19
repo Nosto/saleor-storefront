@@ -27,8 +27,8 @@ import {
   parseQueryString,
   updateQueryString
 } from "../../core/utils";
-import { TypedSearchProductsQuery } from "./queries";
 import Page from "./Page";
+import { TypedSearchProductsQuery } from "./queries";
 
 type SearchViewProps = RouteComponentProps<{}>;
 

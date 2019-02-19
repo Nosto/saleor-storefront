@@ -4,10 +4,10 @@ import { Route, Switch } from "react-router-dom";
 import { CheckoutLogin, NotFound } from "..";
 import { ArticlePage } from "../../views/Article";
 import { CartPage } from "../../views/Cart";
-import { OrderPage } from "../../views/Order";
 import { CategoryPage } from "../../views/Category";
 import { CollectionPage } from "../../views/Collection";
 import { HomePage } from "../../views/Home";
+import { OrderPage } from "../../views/Order";
 import { ProductPage } from "../../views/Product";
 import SearchPage from "../../views/Search";
 

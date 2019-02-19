@@ -6,8 +6,8 @@ import ReactSVG from "react-svg";
 import { CachedThumbnail, DebouncedTextField } from "..";
 import { Checkout_lines_variant } from "../../checkout/types/Checkout";
 import { generateProductUrl } from "../../core/utils";
-import { VariantList_productVariants_edges_node } from "../../views/Product/types/VariantList";
 import { Order_order_lines } from "../../views/Order/types/Order";
+import { VariantList_productVariants_edges_node } from "../../views/Product/types/VariantList";
 
 import cartAddImg from "../../images/cart-add.svg";
 import cartRemoveImg from "../../images/cart-remove.svg";

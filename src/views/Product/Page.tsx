@@ -4,13 +4,13 @@ import classNames from "classnames";
 import * as React from "react";
 import Media from "react-media";
 
-import { Breadcrumbs, CachedImage, ProductDescription, Placement } from "../../components";
+import { Breadcrumbs, CachedImage, Placement, ProductDescription } from "../../components";
 import { CartContext } from "../../components/CartProvider/context";
+import { reloadNosto } from  "../../core/nosto/utils";
 import { generateCategoryUrl, generateProductUrl } from "../../core/utils";
 import GalleryCarousel from "./GalleryCarousel";
 import OtherProducts from "./Other";
 import { ProductDetails_product } from "./types/ProductDetails";
-import { reloadNosto } from  "../../core/nosto/utils";
 
 import noPhotoImg from "../../images/no-photo.svg";
 

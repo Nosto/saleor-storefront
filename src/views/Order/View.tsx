@@ -5,8 +5,8 @@ import { RouteComponentProps } from "react-router";
 
 import { NotFound, OfflinePlaceholder } from "../../components";
 import NetworkStatus from "../../components/NetworkStatus";
-import { TypedOrderDetailsQuery } from "./queries";
 import Page from "./Page";
+import { TypedOrderDetailsQuery } from "./queries";
 
 const View: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => (
   <TypedOrderDetailsQuery

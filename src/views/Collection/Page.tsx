@@ -7,10 +7,10 @@ import { reloadNosto } from  "../../core/nosto/utils";
 import {
   Breadcrumbs,
   Filters,
+  Placement,
   ProductFilters,
   ProductsFeatured,
-  ProductsList,
-  Placement
+  ProductsList
 } from "../../components";
 import { getDBIdFromGraphqlId, maybe } from "../../core/utils";
 import {

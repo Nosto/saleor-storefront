@@ -19,9 +19,9 @@ import {
 } from "../../components/Overlay/context";
 import { getShop_shop } from "../../components/ShopProvider/types/getShop";
 import { UserContext } from "../../components/User/context";
+import { reloadNosto } from  "../../core/nosto/utils";
 import { maybe } from "../../core/utils";
 import { TypedProductVariantsQuery } from "../Product/queries";
-import { reloadNosto } from  "../../core/nosto/utils";
 
 interface PageProps {
   checkout: CheckoutContextInterface;

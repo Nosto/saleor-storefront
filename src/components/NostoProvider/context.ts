@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 export interface NostoInterface {
-  account: String;
+  account: string;
   loading: boolean;
 }
 

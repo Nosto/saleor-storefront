@@ -18,9 +18,9 @@ import { baseUrl as checkoutBaseUrl } from "./checkout/routes";
 import { App, OverlayProvider, UserProvider } from "./components";
 import CartProvider from "./components/CartProvider";
 import { CartContext } from "./components/CartProvider/context";
+import NostoProvider from "./components/NostoProvider";
 import { OverlayContext, OverlayType } from "./components/Overlay/context";
 import ShopProvider from "./components/ShopProvider";
-import NostoProvider from "./components/NostoProvider";
 import { UserContext } from "./components/User/context";
 import {
   authLink,
