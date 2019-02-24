@@ -1,7 +1,8 @@
 module.exports = {
   client: {
     service: {
-      localSchemaFile: './schema.graphql'
+      name: "saleor",
+      url: "http://localhost:8000/graphql/"
     }
   }
 };
