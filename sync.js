@@ -78,20 +78,22 @@ return fetch('http://localhost:8000/graphql/', {
       url: 'http://saleor.dev.nos.to' + product.node.url,
       product_id: product.node.id,
       name: product.node.name,
-      image_url: product.node.images[0].url,
+      image_url: product.node.images[0].url.replace("://localhost", "://docker.for.mac.localhost"),
+      thumb_url: product.node.images[0].url.replace("://localhost", "://docker.for.mac.localhost"),
       price_currency_code: product.node.price.currency,
       availability: product.node.availability.available,
       categories: [product.node.category.name, product.node.collections.name].filter(category => category != null),
       description: product.node.description,
       price: product.node.price.amount,
       custom_fields: product.node.attributes.reduce((fields, item) => {fields[item.attribute.slug] = item.value.slug; return fields;}, {}),
+      alternate_image_urls: product.node.images.map(image => image.url.replace("://localhost", "://docker.for.mac.localhost")),
       skus: product.node.variants.map(variant => {
         return {
           id: variant.id,
           price: variant.price.amount,
           list_price: variant.price.amount,
           url: 'http://saleor.dev.nos.to' + product.node.url,
-          image_url: variant.images.length > 0 ? variant.images[0].url : product.node.images[0].url,
+          image_url: variant.images.length > 0 ? variant.images[0].url.replace("://localhost", "://docker.for.mac.localhost") : product.node.images[0].url.replace("://localhost", "://docker.for.mac.localhost"),
           availability: variant.stockQuantity > 0 ? 'InStock' : 'OutOfStock',
           custom_fields: variant.attributes.reduce((fields, item) => {fields[item.attribute.slug] = item.value.slug; return fields;}, {})
         }
