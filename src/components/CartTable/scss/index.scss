@@ -1,6 +1,13 @@
 @import "../../../components/App/scss/variables.scss";
 
 .cart-table {
+  @media (max-width: $medium-screen) {
+    td:last-child,
+    th:last-child {
+      text-align: right;
+    }
+  }
+
   &-row--processing td {
     position: relative;
 
@@ -33,6 +40,14 @@
         align-items: center;
         display: flex;
         justify-content: space-around;
+
+        &.disabled {
+          opacity: 0.8;
+
+          &:hover svg {
+            cursor: default;
+          }
+        }
       }
 
       & > div {

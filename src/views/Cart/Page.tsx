@@ -107,15 +107,13 @@ class Page extends React.Component<PageProps> {
           <TypedProductVariantsQuery
             variables={{ ids: lines.map(line => line.variantId) }}
           >
-            {({ data }) => {
-              return (
-                <CartTable
-                  {...productTableProps}
-                  lines={extractCartLines(data, lines, locale)}
-                  subtotal={getTotal(data, lines, locale)}
-                />
-              );
-            }}
+            {({ data }) => (
+              <CartTable
+                {...productTableProps}
+                lines={extractCartLines(data, lines, locale)}
+                subtotal={getTotal(data, lines, locale)}
+              />
+            )}
           </TypedProductVariantsQuery>
         )}
 
