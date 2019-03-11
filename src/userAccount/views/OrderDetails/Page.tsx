@@ -65,7 +65,7 @@ class Page extends React.PureComponent<{
                   <span className="product_id">{line.id}</span>
                   <span className="quantity">{line.quantity}</span>
                   <span className="name">{line.name}</span>
-                  <span className="unit_price">{line.unitPrice / line.quantity}</span>
+                  <span className="unit_price">{line.unitPrice}</span>
                   <span className="price_currency_code">{line.currency}</span>
                 </div>
               ))}
