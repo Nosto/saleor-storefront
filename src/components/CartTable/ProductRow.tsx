@@ -17,6 +17,8 @@ export type LineI = ProductVariant & {
   quantity: number;
   totalPrice: string;
   stockQuantity?: number;
+  currency: string;
+  unitPrice: number;
 };
 
 interface ReadProductRowProps {

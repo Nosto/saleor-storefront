@@ -7,7 +7,7 @@ export const reloadNosto = () => {
   }
 
   window.nostojs(api => api.loadRecommendations());
-  if (window.nosto && window.nosto.toolbar) {
+  if (window.nosto && window.nosto.toolbar && window.nosto.toolbar.reload) {
     window.nosto.toolbar.reload();
   }
 };

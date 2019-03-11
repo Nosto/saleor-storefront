@@ -26,7 +26,6 @@ export { default as TextField } from "./TextField";
 export { default as UserProvider } from "./User";
 export { default as AddressSummary } from "./AddressSummary";
 export { CartTable } from "./CartTable";
-export { OrderTable } from "./OrderTable";
 export {
   default as ShippingAddressForm,
   AddressType,
