@@ -18,6 +18,7 @@
     "apollo-link-http": "^1.5.4",
     "apollo-link-retry": "^2.2.5",
     "babel-eslint": "^8.2.6",
+    "base-64": "^0.1.0",
     "braintree-web": "^3.38.1",
     "classnames": "^2.2.6",
     "core-js": "^2.5.7",

@@ -10,6 +10,9 @@ query {
         id
         name
         description
+        collections {
+          name
+        }
         price {
           amount
           currency
@@ -31,9 +34,6 @@ query {
           }
         }
         category {
-          name
-        }
-        collections {
           name
         }
         variants {
@@ -116,4 +116,7 @@ return fetch('http://localhost:8000/graphql/', {
 .then(response => response.json())
 .then(data => {
   console.log(data);
+})
+.catch(e => {
+  console.log(e);
 })
