@@ -12,6 +12,10 @@ export interface CartProps {
 
 class NostoCart extends React.Component<{ cart: CartInterface; }> {
 
+  state = {
+    cart: {}
+  }
+
   static getDerivedStateFromProps(props, state) {
     if (!state || props.cart !== state.cart) {
       reloadNosto();

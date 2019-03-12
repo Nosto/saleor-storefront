@@ -9,6 +9,10 @@ export interface CartProps {
 
 class NostoUser extends React.Component<{ user: UserContextInterface; }> {
 
+  state = {
+    user: {}
+  }
+
   static getDerivedStateFromProps(props, state) {
     if (!state || props.user !== state.user) {
       reloadNosto();
