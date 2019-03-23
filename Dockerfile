@@ -11,9 +11,10 @@ RUN mkdir -p /app && chown -R node:node /app
 
 COPY . /app
 WORKDIR /app
+RUN npm install -g serve
 USER node
 RUN npm install
 COPY --chown=node:node . .
 
-EXPOSE 8000
-CMD [ "node", "start" ]
+EXPOSE 5000
+CMD [ "serve", "-s", "dist" ]

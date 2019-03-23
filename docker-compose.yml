@@ -40,10 +40,15 @@ services:
       - redis
     image: 652884599935.dkr.ecr.us-east-1.amazonaws.com/nosto/saleor-celery:0.5.0
 
-  storfront:
+  storefront:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     restart: unless-stopped
     depends_on:
       - web
+    environment:
+      - BACKEND_URL=http://localhost:8000/
     image: 652884599935.dkr.ecr.us-east-1.amazonaws.com/nosto/saleor-storefront:0.5.0
 
 volumes:
