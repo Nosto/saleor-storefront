@@ -14,6 +14,7 @@ WORKDIR /app
 RUN npm install -g serve
 USER node
 RUN npm install
+RUN npm run-script build
 COPY --chown=node:node . .
 
 EXPOSE 5000
