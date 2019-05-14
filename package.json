@@ -39,7 +39,8 @@
     "react-svg": "^5.0.6",
     "reset-css": "^4.0.1",
     "typeface-montserrat": "0.0.54",
-    "url-join": "^4.0.0"
+    "url-join": "^4.0.0",
+    "yargs": "^13.2.4"
   },
   "devDependencies": {
     "@storybook/addon-options": "^3.4.10",
