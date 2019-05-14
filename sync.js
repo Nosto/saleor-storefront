@@ -116,7 +116,7 @@ return fetch(argv.s + '/graphql/', {
   return JSON.stringify(xx, null, 2);
 })
 .then(data => {
-  return fetch(argv.t + '/api/v1/products/upsert', {
+  return fetch(argv.d + '/api/v1/products/upsert', {
     method: 'POST',
     headers: {
       'authorization': 'Basic ' + Buffer.from(":" + argv.t).toString('base64'),
