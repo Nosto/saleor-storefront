@@ -1,6 +1,18 @@
 const fetch = require("node-fetch");
-let base64 = require('base-64');
-
+const base64 = require('base-64');
+const argv = require('yargs')
+    .usage('Usage: $0 -w [num] -h [num]')
+    .alias('s', 'saleor-endpoint')
+    .describe('s', 'Saleor endpoint')
+    .alias('d', 'nosto-endpoint')
+    .describe('d', 'Nosto endpoint')
+    .alias('t', 'api-token')
+    .describe('t', 'Token for the API')
+    .demandOption(['s','d','t'])
+    .help('h')
+    .alias('h', 'help')
+    .epilog('copyright 2019')
+    .argv;
 
 const query = `
 query {
@@ -64,7 +76,7 @@ query {
 }
  `
 
-return fetch('http://docker.for.mac.localhost:8000/graphql/', {
+return fetch(argv.s + '/graphql/', {
   method: 'POST',
   headers: {
     "content-type":"application/json",
@@ -104,10 +116,10 @@ return fetch('http://docker.for.mac.localhost:8000/graphql/', {
   return JSON.stringify(xx, null, 2);
 })
 .then(data => {
-  return fetch('http://docker.for.mac.localhost:9000/api/v1/products/upsert', {
+  return fetch(argv.t + '/api/v1/products/upsert', {
     method: 'POST',
     headers: {
-      'authorization': 'Basic ' + Buffer.from(":" + "MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz").toString('base64'),
+      'authorization': 'Basic ' + Buffer.from(":" + argv.t).toString('base64'),
       "content-type":"application/json",
     },
     body: data
