@@ -49,6 +49,8 @@ services:
       - web
     environment:
       - BACKEND_URL=http://localhost:8000/
+      - NOSTO_ACCOUNT=mtwjgzhr
+      - NOSTO_KEY=MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz
     image: 652884599935.dkr.ecr.us-east-1.amazonaws.com/nosto/saleor-storefront:0.5.0
 
 volumes:
