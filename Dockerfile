@@ -1,9 +1,10 @@
 FROM node:10
 
 RUN apt-get -y update \
+  && apt-cache search libgl |egrep '^libgl[^a-z]'\
   && apt-get install -y gettext \
+  && apt-get install -y libgl1-mesa-glx\
   && apt-get install build-essential\
-  # Cleanup apt cache
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 

@@ -64,7 +64,7 @@ query {
 }
  `
 
-return fetch('http://localhost:8000/graphql/', {
+return fetch('http://docker.for.mac.localhost:8000/graphql/', {
   method: 'POST',
   headers: {
     "content-type":"application/json",
@@ -104,7 +104,7 @@ return fetch('http://localhost:8000/graphql/', {
   return JSON.stringify(xx, null, 2);
 })
 .then(data => {
-  return fetch('http://localhost:9000/api/v1/products/upsert', {
+  return fetch('http://docker.for.mac.localhost:9000/api/v1/products/upsert', {
     method: 'POST',
     headers: {
       'authorization': 'Basic ' + Buffer.from(":" + "MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz").toString('base64'),

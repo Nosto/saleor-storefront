@@ -30,6 +30,9 @@ services:
   storefront:
     ports:
       - 5000:5000
+    environment:
+      - NOSTO_ACCOUNT=mtwjgzhr
+      - NOSTO_KEY=MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz
 
 volumes:
   saleor-media:

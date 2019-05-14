@@ -34,7 +34,7 @@ export default class NostoProvider extends React.Component<
   componentDidMount () {
       const script = document.createElement("script");
       script.type = 'text/javascript';
-      script.src = "//localhost:9000/include/" + this.state.account;
+      script.src = "//my.dev.nos.to/include/" + this.state.account;
       script.async = true;
       document.body.appendChild(script);
 
