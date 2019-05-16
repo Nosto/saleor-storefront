@@ -12,6 +12,7 @@ RUN mkdir -p /app && chown -R node:node /app
 
 COPY . /app
 WORKDIR /app
+ENV BACKEND_URL http://localhost:8000
 RUN npm install -g serve
 USER node
 RUN npm install

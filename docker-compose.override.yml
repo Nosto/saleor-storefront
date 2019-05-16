@@ -33,6 +33,7 @@ services:
     environment:
       - NOSTO_ACCOUNT=mtwjgzhr
       - NOSTO_KEY=MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz
+      - BACKEND_URL=http://localhost:8000
 
 volumes:
   saleor-media:
