@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  web:
+    ports:
+      - 8000:8000
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      # prevents overshadowing of build-time assets
+      - /app/saleor/static/assets
+      - /app/templates/templated_email/compiled
+      # shared volume between celery and web for media
+      - saleor-media:/app/media
+
+  db:
+    ports:
+      - 5432:5432
+
+  redis:
+    ports:
+      - 6479:6379
+
+  celery:
+    volumes:
+      # prevents overshadowing of build-time assets
+      - /app/templates/templated_email/compiled
+      # shared volume between celery and web for media
+      - saleor-media:/app/media
+
+  storefront:
+    ports:
+      - 5000:5000
+    environment:
+      - NOSTO_ACCOUNT=mtwjgzhr
+      - NOSTO_KEY=MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz
+      - BACKEND_URL=http://localhost:8000
+
+volumes:
+  saleor-media:

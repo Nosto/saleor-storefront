@@ -31,6 +31,8 @@ const Cart: React.FC<{
                     lines.find(({ variantId }) => variantId === node.id)
                       .quantity
                   }
+                  currency={node.price.currency}
+                  unitPrice={node.price.amount}
                 />
               ))}
               <Subtotal checkout={checkout} variants={data} lines={lines} />
@@ -39,8 +41,8 @@ const Cart: React.FC<{
         </TypedProductVariantsQuery>
       ) : (
         <>
-          {checkout.lines.map(({ variant, quantity, id }) => (
-            <Line key={id} {...variant} quantity={quantity} />
+          {checkout.lines.map(({ variant, quantity, id, totalPrice }) => (
+            <Line key={id} {...variant} quantity={quantity} currency={totalPrice.currency} unitPrice={variant.price.amount} />
           ))}
           <Subtotal checkout={checkout} lines={lines} />
           <div className="cart-summary__totals">

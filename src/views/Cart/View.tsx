@@ -16,6 +16,7 @@ const View: React.SFC<RouteComponentProps<{ token?: string }>> = ({
 }) => {
   return (
     <div className="container cart-page">
+      <div className="nosto_page_type" style={{display: 'none' }}>cart</div>
       <h1 className="checkout__header cart-page__header">Shopping bag</h1>
       <CheckoutContext.Consumer>
         {checkout => (

@@ -1,0 +1,64 @@
+version: '2'
+
+services:
+  web:
+    restart: unless-stopped
+    networks:
+      - saleor-backend-tier
+    env_file: common.env
+    depends_on:
+      - db
+      - redis
+    image: 652884599935.dkr.ecr.us-east-1.amazonaws.com/nosto/saleor-web:0.5.0
+
+  db:
+    image: library/postgres:11.1-alpine
+    restart: unless-stopped
+    networks:
+      - saleor-backend-tier
+    volumes:
+      - saleor-db:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=saleor
+      - POSTGRES_PASSWORD=saleor
+
+  redis:
+    image: library/redis:5.0-alpine
+    restart: unless-stopped
+    networks:
+      - saleor-backend-tier
+    volumes:
+      - saleor-redis:/data
+
+  celery:
+    command: celery -A saleor worker --app=saleor.celeryconf:app --loglevel=info
+    restart: unless-stopped
+    networks:
+      - saleor-backend-tier
+    env_file: common.env
+    depends_on:
+      - redis
+    image: 652884599935.dkr.ecr.us-east-1.amazonaws.com/nosto/saleor-celery:0.5.0
+
+  storefront:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - web
+    environment:
+      - BACKEND_URL=http://localhost:8000/
+      - NOSTO_ACCOUNT=mtwjgzhr
+      - NOSTO_KEY=MNA88sb6pIiolUl4CsSi36A2Q1EJPlKBIfOepNCtKz7odirGzsDwdtrvxLma0Ijz
+    image: 652884599935.dkr.ecr.us-east-1.amazonaws.com/nosto/saleor-storefront:0.5.0
+
+volumes:
+  saleor-db:
+    driver: local
+  saleor-redis:
+    driver: local
+
+networks:
+  saleor-backend-tier:
+    driver: bridge

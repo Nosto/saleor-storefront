@@ -18,6 +18,8 @@ import { baseUrl as checkoutBaseUrl } from "./checkout/routes";
 
 import { App, OverlayProvider, UserProvider } from "./components";
 import CartProvider from "./components/CartProvider";
+import { CartContext } from "./components/CartProvider/context";
+import NostoProvider from "./components/NostoProvider";
 import { OverlayContext, OverlayType } from "./components/Overlay/context";
 import ShopProvider from "./components/ShopProvider";
 import { UserContext } from "./components/User/context";
@@ -72,51 +74,53 @@ const startApp = async () => {
   render(
     <Router history={history}>
       <ApolloProvider client={apolloClient}>
-        <ShopProvider>
-          <OverlayProvider>
-            <OverlayContext.Consumer>
-              {({ show }) => (
-                <UserProviderWithTokenHandler
-                  apolloClient={apolloClient}
-                  onUserLogin={() =>
-                    show(OverlayType.message, null, {
-                      title: "You are logged in"
-                    })
-                  }
-                  onUserLogout={() =>
-                    show(OverlayType.message, null, {
-                      title: "You are logged out"
-                    })
-                  }
-                  refreshUser
-                >
-                  <UserContext.Consumer>
-                    {user => (
-                      <CheckoutProvider user={user}>
-                        <CheckoutContext.Consumer>
-                          {checkout => (
-                            <CartProvider
-                              checkout={checkout}
-                              apolloClient={apolloClient}
-                            >
-                              <Switch>
-                                <Route
-                                  path={checkoutBaseUrl}
-                                  component={CheckoutApp}
-                                />
-                                <Route component={App} />
-                              </Switch>
-                            </CartProvider>
-                          )}
-                        </CheckoutContext.Consumer>
-                      </CheckoutProvider>
-                    )}
-                  </UserContext.Consumer>
-                </UserProviderWithTokenHandler>
-              )}
-            </OverlayContext.Consumer>
-          </OverlayProvider>
-        </ShopProvider>
+        <NostoProvider account="mtwjgzhr">
+          <ShopProvider>
+            <OverlayProvider>
+              <OverlayContext.Consumer>
+                {({ show }) => (
+                  <UserProviderWithTokenHandler
+                    apolloClient={apolloClient}
+                    onUserLogin={() =>
+                      show(OverlayType.message, null, {
+                        title: "You are logged in"
+                      })
+                    }
+                    onUserLogout={() =>
+                      show(OverlayType.message, null, {
+                        title: "You are logged out"
+                      })
+                    }
+                    refreshUser
+                  >
+                    <UserContext.Consumer>
+                      {user => (
+                        <CheckoutProvider user={user}>
+                          <CheckoutContext.Consumer>
+                            {checkout => (
+                              <CartProvider
+                                checkout={checkout}
+                                apolloClient={apolloClient}
+                              >
+                                <Switch>
+                                  <Route
+                                    path={checkoutBaseUrl}
+                                    component={CheckoutApp}
+                                  />
+                                  <Route component={App} />
+                                </Switch>
+                              </CartProvider>
+                            )}
+                          </CheckoutContext.Consumer>
+                        </CheckoutProvider>
+                      )}
+                    </UserContext.Consumer>
+                  </UserProviderWithTokenHandler>
+                )}
+              </OverlayContext.Consumer>
+            </OverlayProvider>
+          </ShopProvider>
+        </NostoProvider>
       </ApolloProvider>
     </Router>,
     document.getElementById("root")

@@ -35,6 +35,8 @@ export const extractCartLines = (
       return {
         ...node,
         quantity,
+        currency: node.price.currency,
+        unitPrice: node.price.amount,
         totalPrice: priceToString(
           {
             amount: quantity * node.price.amount,
@@ -51,6 +53,8 @@ export const extractCheckoutLines = (lines: Checkout_lines[]): LineI[] => {
   return lines
     .map(line => ({
       quantity: line.quantity,
+      currency: line.totalPrice.currency,
+      unitPrice: line.totalPrice.gross.amount / line.quantity,
       totalPrice: line.totalPrice.gross.localized,
       ...line.variant
     }))

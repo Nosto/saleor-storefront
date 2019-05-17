@@ -4,8 +4,9 @@ import classNames from "classnames";
 import * as React from "react";
 import Media from "react-media";
 
-import { Breadcrumbs, CachedImage, ProductDescription } from "../../components";
+import { Breadcrumbs, CachedImage, Placement, ProductDescription } from "../../components";
 import { CartContext } from "../../components/CartProvider/context";
+import { reloadNosto } from  "../../core/nosto/utils";
 import { generateCategoryUrl, generateProductUrl } from "../../core/utils";
 import GalleryCarousel from "./GalleryCarousel";
 import OtherProducts from "./Other";
@@ -33,6 +34,8 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
   ];
 
   componentDidMount() {
+    reloadNosto();
+
     if (this.showCarousel) {
       window.addEventListener("scroll", this.handleScroll, {
         passive: true
@@ -75,6 +78,17 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
 
     return (
       <div className="product-page">
+        <div className="nosto_page_type" style={{display: 'none' }}>product</div>
+        <div className="nosto_product" style={{display: 'none' }}>
+          <span className="product_id">{product.id}</span>
+          <span className="name">{product.name}</span>
+
+          <span className="availability">{product.availability.available ? 'InStock' : 'OutOfStock'}</span>
+          <span className="image_url">{product.thumbnail2x.url}</span>
+          <span className="price">{product.price.amount}</span>
+          <span className="price_currency_code">{product.price.currency}</span>
+          <span className="category">{product.category.name}</span>
+        </div>
         <div className="container">
           <Breadcrumbs breadcrumbs={this.populateBreadcrumbs(product)} />
         </div>
@@ -149,6 +163,9 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
             </Media>
           </div>
         </div>
+        <Placement id="productpage-nosto-1" />
+        <Placement id="productpage-nosto-2" />
+        <Placement id="productpage-nosto-3" />
         <OtherProducts products={product.category.products.edges} />
       </div>
     );

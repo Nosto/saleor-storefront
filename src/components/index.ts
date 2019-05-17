@@ -61,3 +61,4 @@ export {
   OverlayType,
   ShowOverlayType
 } from "./Overlay";
+export { default as Placement, PlacementProps } from "./Nosto";
