@@ -1,17 +1,84 @@
 import gql from "graphql-tag";
 import { TypedQuery } from "../../../core/queries";
 
-import {
-  checkoutAddressFragment,
-  checkoutProductVariantFragment
-} from "../../../checkout/queries";
-import { OrderById, OrderByIdVariables } from "./types/OrderById";
-import { OrderByToken, OrderByTokenVariables } from "./types/OrderByToken";
+import { OrderById, OrderByIdVariables } from "./gqlTypes/OrderById";
+import { OrderByToken, OrderByTokenVariables } from "./gqlTypes/OrderByToken";
 
 const orderPriceFragment = gql`
   fragment OrderPrice on TaxedMoney {
     gross {
-      localized
+      amount
+      currency
+    }
+    net {
+      amount
+      currency
+    }
+  }
+`;
+
+export const checkoutAddressFragment = gql`
+  fragment Address on Address {
+    id
+    firstName
+    lastName
+    companyName
+    streetAddress1
+    streetAddress2
+    city
+    postalCode
+    country {
+      code
+      country
+    }
+    countryArea
+    phone
+    isDefaultBillingAddress
+    isDefaultShippingAddress
+  }
+`;
+
+export const checkoutProductVariantFragment = gql`
+  ${orderPriceFragment}
+  fragment ProductVariant on ProductVariant {
+    id
+    name
+    sku
+    quantityAvailable
+    isAvailable
+    pricing {
+      onSale
+      priceUndiscounted {
+        ...OrderPrice
+      }
+      price {
+        ...OrderPrice
+      }
+    }
+    attributes {
+      attribute {
+        id
+        name
+      }
+      values {
+        id
+        name
+        value: name
+      }
+    }
+    product {
+      id
+      name
+      thumbnail {
+        url
+        alt
+      }
+      thumbnail2x: thumbnail(size: 510) {
+        url
+      }
+      productType {
+        isShippingRequired
+      }
     }
   }
 `;
@@ -38,10 +105,8 @@ const orderDetailFragment = gql`
         ...ProductVariant
       }
       unitPrice {
+        ...OrderPrice
         currency
-        gross {
-          amount
-        }
       }
     }
     subtotal {
@@ -67,7 +132,7 @@ const orderDetailsByIdQuery = gql`
 
 const orderDetailsByTokenQuery = gql`
   ${orderDetailFragment}
-  query OrderByToken($token: String!) {
+  query OrderByToken($token: UUID!) {
     orderByToken(token: $token) {
       ...OrderDetail
     }

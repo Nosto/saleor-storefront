@@ -1,82 +1,157 @@
 import "./scss/index.scss";
 
-import * as React from "react";
+import { isEmpty } from "lodash";
+import queryString from "query-string";
+import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
+import { useHistory } from "react-router-dom";
+
+import { CountryCode } from "@sdk/gqlTypes/globalTypes";
+import { useCart, useUserDetails } from "@sdk/react";
 
 import { MetaWrapper, NotFound, OfflinePlaceholder } from "../../components";
 import NetworkStatus from "../../components/NetworkStatus";
 import { getGraphqlIdFromDBId, maybe } from "../../core/utils";
+import { ProductDetails_product } from "./gqlTypes/ProductDetails";
 import Page from "./Page";
 import { TypedProductDetailsQuery } from "./queries";
-import { ProductDetails_product } from "./types/ProductDetails";
+import { IProps } from "./types";
 
 const canDisplay = (product: ProductDetails_product) =>
   maybe(
     () =>
-      !!product.description &&
+      !!product.descriptionJson &&
       !!product.name &&
-      !!product.price &&
+      !!product.pricing &&
       !!product.variants
   );
 const extractMeta = (product: ProductDetails_product) => ({
   custom: [
     {
-      content: product.price.amount.toString(),
-      property: "product:price:amount"
+      content: product.pricing.priceRange.start.gross.amount.toString(),
+      property: "product:price:amount",
     },
     {
-      content: product.price.currency,
-      property: "product:price:currency"
+      content: product.pricing.priceRange.start.gross.currency,
+      property: "product:price:currency",
     },
     {
-      content: product.availability.available ? "in stock" : "out off stock",
-      property: "product:availability"
+      content: product.isAvailable ? "in stock" : "out off stock",
+      property: "product:isAvailable",
     },
     {
       content: product.category.name,
-      property: "product:category"
-    }
+      property: "product:category",
+    },
   ],
-  description: product.seoDescription || product.description,
-  image: product.thumbnail.url,
+  description: product.seoDescription || product.descriptionJson,
+  image: maybe(() => product.thumbnail.url, null),
   title: product.seoTitle || product.name,
   type: "product.item",
-  url: window.location.href
+  url: window.location.href,
 });
 
-const View: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => (
-  <TypedProductDetailsQuery
-    loaderFull
-    variables={{
-      id: getGraphqlIdFromDBId(match.params.id, "Product")
-    }}
-    errorPolicy="all"
-    key={match.params.id}
-  >
-    {({ data }) => (
-      <NetworkStatus>
-        {isOnline => {
-          const { product } = data;
+const PageWithQueryAttributes: React.FC<IProps> = props => {
+  const { product } = props;
+  const history = useHistory();
+  const search = history.location.search;
+  const searchQueryAttributes = queryString.parse(search);
 
-          if (canDisplay(product)) {
-            return (
-              <MetaWrapper meta={extractMeta(product)}>
-                <Page product={product} />
-              </MetaWrapper>
-            );
-          }
+  const onAttributeChangeHandler = (slug: string | null, value: string) => {
+    history.replace(
+      queryString.stringifyUrl(
+        {
+          query: { [slug]: value },
+          url: `${history.location.pathname}${history.location.search}`,
+        },
+        { skipEmptyString: true }
+      )
+    );
+  };
+  const [queryAttributes, setQueryAttributes] = useState({});
 
-          if (product === null) {
-            return <NotFound />;
+  useEffect(() => {
+    if (!isEmpty(searchQueryAttributes)) {
+      const queryAttributes: Record<string, string> = {};
+      product.variants.forEach(({ attributes }) => {
+        attributes.forEach(({ attribute, values }) => {
+          const selectedAttributeValue = searchQueryAttributes[attribute.slug];
+          if (
+            selectedAttributeValue &&
+            values[0].value === selectedAttributeValue
+          ) {
+            if (
+              isEmpty(queryAttributes) ||
+              !attributes.filter(
+                ({ attribute: { id }, values }) =>
+                  queryAttributes[id] && queryAttributes[id] !== values[0].value
+              ).length
+            ) {
+              queryAttributes[attribute.id] = selectedAttributeValue;
+            }
           }
+        });
+      });
+      setQueryAttributes(queryAttributes);
+    }
+  }, [product.variants.length]);
 
-          if (!isOnline) {
-            return <OfflinePlaceholder />;
-          }
-        }}
-      </NetworkStatus>
-    )}
-  </TypedProductDetailsQuery>
-);
+  useEffect(() => {
+    history.replace(history.location.pathname);
+  }, [queryAttributes]);
+
+  return (
+    <Page
+      {...props}
+      queryAttributes={queryAttributes}
+      onAttributeChangeHandler={onAttributeChangeHandler}
+    />
+  );
+};
+
+const View: React.FC<RouteComponentProps<{ id: string }>> = ({ match }) => {
+  const { addItem, items } = useCart();
+  const { data: user } = useUserDetails();
+
+  return (
+    <TypedProductDetailsQuery
+      loaderFull
+      variables={{
+        countryCode:
+          (user?.defaultShippingAddress?.country?.code as CountryCode) || null,
+        id: getGraphqlIdFromDBId(match.params.id, "Product"),
+      }}
+      errorPolicy="all"
+      key={match.params.id}
+    >
+      {({ data }) => (
+        <NetworkStatus>
+          {isOnline => {
+            const { product } = data;
+            if (canDisplay(product)) {
+              return (
+                <MetaWrapper meta={extractMeta(product)}>
+                  <PageWithQueryAttributes
+                    product={product}
+                    add={addItem}
+                    items={items}
+                  />
+                </MetaWrapper>
+              );
+            }
+
+            if (product === null) {
+              return <NotFound />;
+            }
+
+            if (!isOnline) {
+              return <OfflinePlaceholder />;
+            }
+          }}
+        </NetworkStatus>
+      )}
+    </TypedProductDetailsQuery>
+  );
+};
 
 export default View;

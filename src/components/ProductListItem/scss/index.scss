@@ -1,4 +1,4 @@
-@import "../../App/scss/variables.scss";
+@import "../../../globalStyles/scss/variables.scss";
 
 .product-list-item {
   text-align: center;
@@ -8,6 +8,13 @@
     font-weight: $product-item-title-font-weight;
     margin-top: $spacer;
     text-align: left;
+  }
+
+  &__undiscounted_price {
+    text-decoration: line-through;
+    color: $gray;
+    font-size: $small-font-size;
+    font-weight: regular;
   }
 
   &__category {

@@ -1,8 +1,7 @@
-import { ApolloError } from "apollo-client";
 import * as React from "react";
 import NumberFormat from "react-number-format";
 
-import { SelectField, TextField } from "..";
+import { Select, SelectField, TextField } from "..";
 
 export const NON_FIELD_ERROR = "nonFieldError";
 
@@ -11,17 +10,18 @@ export interface FormError {
   field?: string;
 }
 
-interface FormProps {
+interface FormProps<Values> {
+  id?: string;
   children: React.ReactNode;
   className?: string;
   errors?: FormError[];
-  data?: { [key: string]: string | any };
+  data?: Values;
   formRef?: React.RefObject<HTMLFormElement>;
-  onSubmit?(event: React.FormEvent<any>, data: { [key: string]: string });
+  onSubmit?(event: React.FormEvent<any>, data: Values);
 }
 
-interface FormState {
-  data: { [key: string]: string | any };
+interface FormState<Values> {
+  data: Values;
   errors: FormError[];
 }
 
@@ -45,7 +45,10 @@ function removeDuplicatedErrors(errors) {
   });
 }
 
-class Form extends React.Component<FormProps, FormState> {
+class Form<Values> extends React.Component<
+  FormProps<Values>,
+  FormState<Values>
+> {
   static getDerivedStateFromProps(props, state) {
     const propsKey = (props.errors || [])
       .map(error => error.field || NON_FIELD_ERROR)
@@ -58,10 +61,10 @@ class Form extends React.Component<FormProps, FormState> {
     if (propsKey !== stateKey) {
       const errors = removeDuplicatedErrors([
         ...(state.errors || []),
-        ...(props.errors || [])
+        ...(props.errors || []),
       ]);
       return {
-        errors
+        errors,
       };
     }
     return null;
@@ -75,7 +78,7 @@ class Form extends React.Component<FormProps, FormState> {
     const data = props.data || {};
     this.state = {
       data,
-      errors
+      errors,
     };
   }
 
@@ -84,7 +87,7 @@ class Form extends React.Component<FormProps, FormState> {
       JSON.stringify(prevProps.errors) !== JSON.stringify(this.props.errors)
     ) {
       this.setState({
-        errors: this.props.errors || []
+        errors: this.props.errors || [],
       });
     }
   }
@@ -129,7 +132,7 @@ class Form extends React.Component<FormProps, FormState> {
       // If current component has additional children, traverse through them as well
       if (child.props.children) {
         return React.cloneElement(child, {
-          children: this.renderWrappedChildren(child.props.children)
+          children: this.renderWrappedChildren(child.props.children),
         });
       }
       if (child.type === TextField || child.type === NumberFormat) {
@@ -162,9 +165,9 @@ class Form extends React.Component<FormProps, FormState> {
             }
             this.handleInputError(event);
             event.preventDefault();
-          }
+          },
         });
-      } else if (child.type === SelectField) {
+      } else if (child.type === SelectField || child.type === Select) {
         let defaultValue;
         if (
           child.props.name === "country" &&
@@ -172,7 +175,7 @@ class Form extends React.Component<FormProps, FormState> {
         ) {
           defaultValue = {
             label: this.state.data[child.props.name].country,
-            value: this.state.data[child.props.name].code
+            value: this.state.data[child.props.name].code,
           };
         } else {
           defaultValue = this.state.data[child.props.name];
@@ -186,7 +189,7 @@ class Form extends React.Component<FormProps, FormState> {
               const data = { ...state.data, [child.props.name]: value };
               return { data };
             });
-          }
+          },
         });
       } else if (child.props.type === "checkbox") {
         const defaultValue = this.state.data[child.props.name] || false;
@@ -197,11 +200,11 @@ class Form extends React.Component<FormProps, FormState> {
             this.setState(state => {
               const data = {
                 ...state.data,
-                [child.props.name]: !state.data[child.props.name]
+                [child.props.name]: !state.data[child.props.name],
               };
               return { data };
             });
-          }
+          },
         });
       }
       return child;

@@ -1,158 +1,123 @@
-import { smallScreen } from "../../components/App/scss/variables.scss";
+import { smallScreen } from "../../globalStyles/scss/variables.scss";
 
 import classNames from "classnames";
-import * as React from "react";
+import React from "react";
 import Media from "react-media";
 
-import { Breadcrumbs, CachedImage, ProductDescription } from "../../components";
-import { CartContext } from "../../components/CartProvider/context";
+import { Breadcrumbs, ProductDescription } from "../../components";
 import { generateCategoryUrl, generateProductUrl } from "../../core/utils";
 import GalleryCarousel from "./GalleryCarousel";
 import OtherProducts from "./Other";
-import { ProductDetails_product } from "./types/ProductDetails";
 
-import noPhotoImg from "../../images/no-photo.svg";
+import { ProductDescription as NewProductDescription } from "../../@next/components/molecules";
+import { ProductGallery } from "../../@next/components/organisms/";
+import { structuredData } from "../../core/SEO/Product/structuredData";
+import { IProps } from "./types";
 
-class Page extends React.PureComponent<{ product: ProductDetails_product }> {
-  fixedElement: React.RefObject<HTMLDivElement> = React.createRef();
-  productGallery: React.RefObject<HTMLDivElement> = React.createRef();
+const populateBreadcrumbs = product => [
+  {
+    link: generateCategoryUrl(product.category.id, product.category.name),
+    value: product.category.name,
+  },
+  {
+    link: generateProductUrl(product.id, product.name),
+    value: product.name,
+  },
+];
 
-  get showCarousel() {
-    return this.props.product.images.length > 1;
-  }
+const Page: React.FC<IProps & {
+  queryAttributes: Record<string, string>;
+  onAttributeChangeHandler: (slug: string | null, value: string) => void;
+}> = ({ add, product, items, queryAttributes, onAttributeChangeHandler }) => {
+  const productGallery: React.RefObject<HTMLDivElement> = React.useRef();
 
-  populateBreadcrumbs = product => [
-    {
-      link: generateCategoryUrl(product.category.id, product.category.name),
-      value: product.category.name
-    },
-    {
-      link: generateProductUrl(product.id, product.name),
-      value: product.name
-    }
-  ];
+  const [variantId, setVariantId] = React.useState("");
 
-  componentDidMount() {
-    if (this.showCarousel) {
-      window.addEventListener("scroll", this.handleScroll, {
-        passive: true
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.showCarousel) {
-      window.removeEventListener("scroll", this.handleScroll);
-    }
-  }
-
-  handleScroll = () => {
-    const productGallery = this.productGallery.current;
-    const fixedElement = this.fixedElement.current;
-
-    if (productGallery && fixedElement) {
-      const containerPostion =
-        window.innerHeight - productGallery.getBoundingClientRect().bottom;
-      const fixedPosition =
-        window.innerHeight - fixedElement.getBoundingClientRect().bottom;
-      const fixedToTop = fixedElement.getBoundingClientRect().top;
-      const galleryToTop =
-        this.productGallery.current.getBoundingClientRect().top +
-        window.scrollY;
-
-      if (containerPostion >= fixedPosition && fixedToTop <= galleryToTop) {
-        fixedElement.classList.remove("product-page__product__info--fixed");
-        fixedElement.classList.add("product-page__product__info--absolute");
+  const getImages = () => {
+    if (product.variants && variantId) {
+      const variant = product.variants
+        .filter(variant => variant.id === variantId)
+        .pop();
+      if (variant.images.length > 0) {
+        return variant.images;
       } else {
-        fixedElement.classList.remove("product-page__product__info--absolute");
-        fixedElement.classList.add("product-page__product__info--fixed");
+        return product.images;
       }
+    } else {
+      return product.images;
     }
   };
 
-  render() {
-    const { product } = this.props;
+  const productDescription = (
+    <ProductDescription
+      items={items}
+      productId={product.id}
+      name={product.name}
+      productVariants={product.variants}
+      pricing={product.pricing}
+      queryAttributes={queryAttributes}
+      addToCart={add}
+      setVariantId={setVariantId}
+      onAttributeChangeHandler={onAttributeChangeHandler}
+    />
+  );
 
-    return (
-      <div className="product-page">
-        <div className="container">
-          <Breadcrumbs breadcrumbs={this.populateBreadcrumbs(product)} />
-        </div>
-        <div className="container">
-          <div className="product-page__product">
-            <Media query={{ maxWidth: smallScreen }}>
-              {matches =>
-                matches ? (
-                  <>
-                    <GalleryCarousel images={product.images} />
-                    <div className="product-page__product__info">
-                      <CartContext.Consumer>
-                        {cart => (
-                          <ProductDescription
-                            name={product.name}
-                            productVariants={product.variants}
-                            addToCart={cart.add}
-                          >
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: product.description
-                              }}
-                            />
-                          </ProductDescription>
-                        )}
-                      </CartContext.Consumer>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div
-                      className="product-page__product__gallery"
-                      ref={this.productGallery}
-                    >
-                      {product.images.map(image => (
-                        <CachedImage
-                          url={image.url || noPhotoImg}
-                          key={image.id}
-                        >
-                          <img src={noPhotoImg} />
-                        </CachedImage>
-                      ))}
-                    </div>
-                    <div className="product-page__product__info">
-                      <div
-                        className={classNames({
-                          ["product-page__product__info--fixed"]: this
-                            .showCarousel
-                        })}
-                        ref={this.fixedElement}
-                      >
-                        <CartContext.Consumer>
-                          {cart => (
-                            <ProductDescription
-                              name={product.name}
-                              productVariants={product.variants}
-                              addToCart={cart.add}
-                            >
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: product.description
-                                }}
-                              />
-                            </ProductDescription>
-                          )}
-                        </CartContext.Consumer>
-                      </div>
-                    </div>
-                  </>
-                )
-              }
-            </Media>
-          </div>
-        </div>
-        <OtherProducts products={product.category.products.edges} />
+  return (
+    <div className="product-page">
+      <div className="container">
+        <Breadcrumbs breadcrumbs={populateBreadcrumbs(product)} />
       </div>
-    );
-  }
-}
+      <div className="container">
+        <div className="product-page__product">
+          {/* Add script here */}
+          <script className="structured-data-list" type="application/ld+json">
+            {structuredData(product)}
+          </script>
+
+          {/*  */}
+          <Media query={{ maxWidth: smallScreen }}>
+            {matches =>
+              matches ? (
+                <>
+                  <GalleryCarousel images={getImages()} />
+                  <div className="product-page__product__info">
+                    {productDescription}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div
+                    className="product-page__product__gallery"
+                    ref={productGallery}
+                  >
+                    <ProductGallery images={getImages()} />
+                  </div>
+                  <div className="product-page__product__info">
+                    <div
+                      className={classNames(
+                        "product-page__product__info--fixed"
+                      )}
+                    >
+                      {productDescription}
+                    </div>
+                  </div>
+                </>
+              )
+            }
+          </Media>
+        </div>
+      </div>
+      <div className="container">
+        <div className="product-page__product__description">
+          <NewProductDescription
+            descriptionJson={product.descriptionJson}
+            attributes={product.attributes}
+          />
+        </div>
+      </div>
+      <OtherProducts products={product.category.products.edges} />
+    </div>
+  );
+};
 
 export default Page;

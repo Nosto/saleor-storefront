@@ -16,15 +16,19 @@ import {
 import RegisterForm from "./RegisterForm";
 
 import closeImg from "../../../images/x.svg";
+import ForgottenPassword from "./ForgottenPassword";
 
 class Login extends React.Component<
-  { overlay: OverlayContextInterface },
+  { overlay: OverlayContextInterface; active?: "login" | "register" },
   { active: "login" | "register" }
 > {
+  static defaultProps = {
+    active: "login",
+  };
   constructor(props) {
     super(props);
     this.state = {
-      active: "login"
+      active: props.active,
     };
   }
 
@@ -41,7 +45,7 @@ class Login extends React.Component<
         <div className="login">
           <Online>
             <div className="overlay__header">
-              <div className="overlay__header-text">Saleor account</div>
+              <p className="overlay__header-text">Saleor account</p>
               <ReactSVG
                 path={closeImg}
                 onClick={hide}
@@ -50,12 +54,14 @@ class Login extends React.Component<
             </div>
             <div className="login__tabs">
               <span
+                data-cy="accountOverlayLoginTab"
                 onClick={() => this.changeActiveTab("login")}
                 className={this.state.active === "login" ? "active-tab" : ""}
               >
                 Sign in to account
               </span>
               <span
+                data-cy="accountOverlayRegisterTab"
                 onClick={() => this.changeActiveTab("register")}
                 className={this.state.active === "register" ? "active-tab" : ""}
               >
@@ -65,22 +71,15 @@ class Login extends React.Component<
             <div className="login__content">
               {this.state.active === "login" ? (
                 <>
-                  <LoginForm />
-                  <div className="login__content__password-reminder">
-                    <p>
-                      Have you forgotten your password?&nbsp;
-                      <span
-                        onClick={() =>
-                          show(OverlayType.password, OverlayTheme.right)
-                        }
-                      >
-                        Click Here
-                      </span>
-                    </p>
-                  </div>
+                  <LoginForm hide={hide} />
+                  <ForgottenPassword
+                    onClick={() => {
+                      show(OverlayType.password, OverlayTheme.right);
+                    }}
+                  />
                 </>
               ) : (
-                <RegisterForm show={show} />
+                <RegisterForm hide={hide} />
               )}
             </div>
           </Online>

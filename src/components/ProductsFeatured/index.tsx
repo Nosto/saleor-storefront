@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import { Carousel, Loader, ProductListItem } from "..";
+import { Carousel, ProductListItem } from "..";
 import { generateProductUrl, maybe } from "../../core/utils";
 import { TypedFeaturedProductsQuery } from "./queries";
 
@@ -38,6 +38,8 @@ const ProductsFeatured: React.FC<ProductsFeaturedProps> = ({ title }) => {
               </div>
             </div>
           );
+        } else {
+          return null;
         }
       }}
     </TypedFeaturedProductsQuery>
@@ -45,7 +47,7 @@ const ProductsFeatured: React.FC<ProductsFeaturedProps> = ({ title }) => {
 };
 
 ProductsFeatured.defaultProps = {
-  title: "Featured"
+  title: "Featured",
 };
 
 export default ProductsFeatured;

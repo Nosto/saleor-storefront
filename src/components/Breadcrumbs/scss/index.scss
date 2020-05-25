@@ -1,4 +1,4 @@
-@import "../../App/scss/variables.scss";
+@import "../../../globalStyles/scss/variables.scss";
 
 .breadcrumbs {
   display: inline-flex;
@@ -15,8 +15,7 @@
     }
 
     a {
-      color: $gray;
-      font-weight: $bold-font-weight;
+      color: $gray-dark;
       text-decoration: none;
       vertical-align: middle;
       transition: 0.3s;
@@ -24,6 +23,17 @@
       &:hover,
       &:focus {
         color: $blue;
+      }
+    }
+  }
+
+  &__active {
+    a {
+      color: $base-font-color;
+      font-weight: $bold-font-weight;
+
+      &:hover {
+        color: $base-font-color;
       }
     }
   }

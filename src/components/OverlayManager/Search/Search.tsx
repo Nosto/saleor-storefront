@@ -3,7 +3,7 @@ import "./scss/index.scss";
 import classNames from "classnames";
 import { stringify } from "query-string";
 import * as React from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 import ReactSVG from "react-svg";
 
 import {
@@ -12,17 +12,17 @@ import {
   OfflinePlaceholder,
   Overlay,
   OverlayContextInterface,
-  OverlayType
+  OverlayType,
 } from "../..";
+import { searchUrl } from "../../../app/routes";
 import { maybe } from "../../../core/utils";
-import { searchUrl } from "../../App/routes";
 import { DebouncedTextField } from "../../Debounce";
 import { Error } from "../../Error";
 import NetworkStatus from "../../NetworkStatus";
+import { SearchResults } from "./gqlTypes/SearchResults";
 import NothingFound from "./NothingFound";
 import ProductItem from "./ProductItem";
 import { TypedSearchResults } from "./queries";
-import { SearchResults } from "./types/SearchResults";
 
 import searchImg from "../../../images/search.svg";
 import closeImg from "../../../images/x.svg";
@@ -70,7 +70,7 @@ class Search extends React.Component<SearchProps, SearchState> {
     }
   };
 
-  componentDidUpdate(prevProps: SearchProps, prevState: SearchState) {
+  componentDidUpdate(_prevProps: SearchProps, prevState: SearchState) {
     if (
       !!prevState.search.length &&
       this.props.overlay.type !== OverlayType.search
@@ -84,7 +84,7 @@ class Search extends React.Component<SearchProps, SearchState> {
       <Overlay context={this.props.overlay} className="overlay--no-background">
         <form
           className={classNames("search", {
-            "search--has-results": this.hasSearchPhrase
+            "search--has-results": this.hasSearchPhrase,
           })}
           onClick={e => e.stopPropagation()}
           onSubmit={this.handleSubmit}
@@ -105,7 +105,7 @@ class Search extends React.Component<SearchProps, SearchState> {
           <div
             className={classNames({
               ["search__products"]: true,
-              ["search__products--expanded"]: this.hasSearchPhrase
+              ["search__products--expanded"]: this.hasSearchPhrase,
             })}
           >
             <NetworkStatus>
@@ -135,6 +135,7 @@ class Search extends React.Component<SearchProps, SearchState> {
                                   <Loader />
                                 ) : (
                                   <Button
+                                    dataCy="searchProductsButton"  
                                     btnRef={this.submitBtnRef}
                                     type="submit"
                                   >

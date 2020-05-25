@@ -3,15 +3,15 @@ import "./scss/index.scss";
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 
-import { MetaWrapper } from "../../components";
+import { MetaWrapper, NotFound } from "../../components";
 import { STATIC_PAGES } from "../../core/config";
 import { generatePageUrl, maybe } from "../../core/utils";
+import { Article_shop } from "./gqlTypes/Article";
 import Page from "./Page";
 import { TypedArticleQuery } from "./query";
-import { Article_shop } from "./types/Article";
 
 const canDisplay = page =>
-  maybe(() => !!page && !!page.title && !!page.content);
+  maybe(() => !!page && !!page.title && !!page.contentJson);
 const getHeaderImage = (shop: Article_shop) =>
   maybe(() => shop.homepageCollection.backgroundImage.url);
 
@@ -19,14 +19,14 @@ type ViewProps = RouteComponentProps<{ slug: string }>;
 
 export const View: React.FC<ViewProps> = ({
   match: {
-    params: { slug }
-  }
+    params: { slug },
+  },
 }) => (
   <TypedArticleQuery loaderFull variables={{ slug }} errorPolicy="all">
     {({ data }) => {
       const navigation = STATIC_PAGES.map(page => ({
         ...page,
-        active: page.url === window.location.pathname
+        active: page.url === window.location.pathname,
       }));
       const { page, shop } = data;
 
@@ -34,14 +34,14 @@ export const View: React.FC<ViewProps> = ({
         const breadcrumbs = [
           {
             link: generatePageUrl(slug),
-            value: page.title
-          }
+            value: page.title,
+          },
         ];
         return (
           <MetaWrapper
             meta={{
               description: page.seoDescription,
-              title: page.seoTitle
+              title: page.seoTitle,
             }}
           >
             <Page
@@ -52,6 +52,10 @@ export const View: React.FC<ViewProps> = ({
             />
           </MetaWrapper>
         );
+      }
+
+      if (page === null) {
+        return <NotFound />;
       }
     }}
   </TypedArticleQuery>

@@ -1,11 +1,23 @@
 import gql from "graphql-tag";
-
 import { TypedQuery } from "../../core/queries";
 import {
   ProductDetails,
-  ProductDetailsVariables
-} from "./types/ProductDetails";
-import { VariantList, VariantListVariables } from "./types/VariantList";
+  ProductDetailsVariables,
+} from "./gqlTypes/ProductDetails";
+import { VariantList, VariantListVariables } from "./gqlTypes/VariantList";
+
+export const priceFragment = gql`
+  fragment Price on TaxedMoney {
+    gross {
+      amount
+      currency
+    }
+    net {
+      amount
+      currency
+    }
+  }
+`;
 
 export const basicProductFragment = gql`
   fragment BasicProductFields on Product {
@@ -21,22 +33,73 @@ export const basicProductFragment = gql`
   }
 `;
 
+export const productPricingFragment = gql`
+  ${priceFragment}
+  fragment ProductPricingField on Product {
+    pricing {
+      onSale
+      priceRangeUndiscounted {
+        start {
+          ...Price
+        }
+        stop {
+          ...Price
+        }
+      }
+      priceRange {
+        start {
+          ...Price
+        }
+        stop {
+          ...Price
+        }
+      }
+    }
+  }
+`;
+
+export const selectedAttributeFragment = gql`
+  fragment SelectedAttributeFields on SelectedAttribute {
+    attribute {
+      id
+      name
+    }
+    values {
+      id
+      name
+    }
+  }
+`;
+
 export const productVariantFragment = gql`
+  ${priceFragment}
   fragment ProductVariantFields on ProductVariant {
     id
+    sku
     name
-    stockQuantity
-    price {
-      currency
-      amount
-      localized
+    isAvailable
+    quantityAvailable(countryCode: $countryCode)
+    images {
+      id
+      url
+      alt
+    }
+    pricing {
+      onSale
+      priceUndiscounted {
+        ...Price
+      }
+      price {
+        ...Price
+      }
     }
     attributes {
       attribute {
         id
         name
+        slug
       }
-      value {
+      values {
         id
         name
         value: name
@@ -47,63 +110,53 @@ export const productVariantFragment = gql`
 
 export const productDetailsQuery = gql`
   ${basicProductFragment}
+  ${selectedAttributeFragment}
   ${productVariantFragment}
-  query ProductDetails($id: ID!) {
+  ${productPricingFragment}
+  query ProductDetails($id: ID!, $countryCode: CountryCode) {
     product(id: $id) {
       ...BasicProductFields
-      description
+      ...ProductPricingField
+      descriptionJson
       category {
         id
         name
-        products(first: 4) {
+        products(first: 3) {
           edges {
             node {
               ...BasicProductFields
-              category {
-                id
-                name
-              }
-              price {
-                amount
-                currency
-                localized
-              }
+              ...ProductPricingField
             }
           }
         }
       }
-      price {
-        amount
-        currency
-        localized
-      }
       images {
         id
         url
+      }
+      attributes {
+        ...SelectedAttributeFields
       }
       variants {
         ...ProductVariantFields
       }
       seoDescription
       seoTitle
-      availability {
-        available
-      }
+      isAvailable
     }
   }
 `;
 
 // FIXME: Check how to handle pagination of `productVariants` in the UI.
 // We need allow the user view  all cart items regardless of pagination.
-export const productVariatnsQuery = gql`
+export const productVariantsQuery = gql`
   ${basicProductFragment}
   ${productVariantFragment}
-  query VariantList($ids: [ID!]) {
+  query VariantList($ids: [ID!], $countryCode: CountryCode) {
     productVariants(ids: $ids, first: 100) {
       edges {
         node {
           ...ProductVariantFields
-          stockQuantity
           product {
             ...BasicProductFields
           }
@@ -121,4 +174,4 @@ export const TypedProductDetailsQuery = TypedQuery<
 export const TypedProductVariantsQuery = TypedQuery<
   VariantList,
   VariantListVariables
->(productVariatnsQuery);
+>(productVariantsQuery);

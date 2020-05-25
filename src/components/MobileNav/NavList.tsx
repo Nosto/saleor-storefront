@@ -4,7 +4,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import ReactSVG from "react-svg";
 
-import { baseUrl } from "../App/routes";
+import { baseUrl } from "../../app/routes";
 import NavItem, { INavItem } from "./NavItem";
 
 import backImg from "../../images/arrow-back.svg";
@@ -23,7 +23,7 @@ interface NavListState {
 class NavList extends React.PureComponent<NavListProps, NavListState> {
   state: NavListState = {
     displayedItems: this.props.items,
-    parent: null
+    parent: null,
   };
 
   handleShowSubItems = (item: INavItem) => {
@@ -39,7 +39,7 @@ class NavList extends React.PureComponent<NavListProps, NavListState> {
       const newParent = this.findItemById(grandparent.id);
       this.setState({
         displayedItems: newParent.children,
-        parent: newParent
+        parent: newParent,
       });
     }
   };

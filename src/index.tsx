@@ -1,44 +1,46 @@
-import { defaultDataIdFromObject, InMemoryCache } from "apollo-cache-inmemory";
+import { Integrations as ApmIntegrations } from "@sentry/apm";
+import * as Sentry from "@sentry/browser";
+import {
+  defaultDataIdFromObject,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from "apollo-cache-inmemory";
 import { persistCache } from "apollo-cache-persist";
 import { ApolloClient } from "apollo-client";
-import { ApolloLink } from "apollo-link";
-import { BatchHttpLink } from "apollo-link-batch-http";
-import { RetryLink } from "apollo-link-retry";
 import * as React from "react";
+import { positions, Provider as AlertProvider, useAlert } from "react-alert";
 import { ApolloProvider } from "react-apollo";
 import { render } from "react-dom";
-import { Route, Router, Switch } from "react-router-dom";
-import urljoin from "url-join";
+import { hot } from "react-hot-loader";
+import { Route, Router } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
+import { QueryParamProvider } from "use-query-params";
 
-import { createBrowserHistory } from "history";
-import CheckoutApp from "./checkout";
-import { CheckoutContext } from "./checkout/context";
-import CheckoutProvider from "./checkout/provider";
-import { baseUrl as checkoutBaseUrl } from "./checkout/routes";
+import { NotificationTemplate } from "@components/atoms";
+import {
+  ServiceWorkerContext,
+  ServiceWorkerProvider,
+} from "@components/containers";
+import { SaleorProvider, useAuth } from "@sdk/react";
+import { defaultTheme, GlobalStyle } from "@styles";
 
-import { App, OverlayProvider, UserProvider } from "./components";
-import CartProvider from "./components/CartProvider";
-import { OverlayContext, OverlayType } from "./components/Overlay/context";
+import { App } from "./app";
+import { OverlayProvider } from "./components";
 import ShopProvider from "./components/ShopProvider";
-import { UserContext } from "./components/User/context";
+import {
+  apiUrl,
+  sentryDsn,
+  sentrySampleRate,
+  serviceWorkerTimeout,
+} from "./constants";
+import { history } from "./history";
+
+import { createSaleorClient } from "./@sdk";
 import {
   authLink,
-  invalidTokenLinkWithTokenHandlerComponent
-} from "./core/auth";
-
-const API_URL = urljoin(process.env.BACKEND_URL || "", "/graphql/");
-
-const {
-  component: UserProviderWithTokenHandler,
-  link: invalidTokenLink
-} = invalidTokenLinkWithTokenHandlerComponent(UserProvider);
-
-const link = ApolloLink.from([
-  invalidTokenLink,
-  authLink,
-  new RetryLink(),
-  new BatchHttpLink({ uri: API_URL })
-]);
+  fireSignOut,
+  invalidTokenLinkWithTokenHandler,
+} from "./@sdk/auth";
 
 const cache = new InMemoryCache({
   dataIdFromObject: obj => {
@@ -46,85 +48,138 @@ const cache = new InMemoryCache({
       return "shop";
     }
     return defaultDataIdFromObject(obj);
-  }
-});
-
-const history = createBrowserHistory();
-history.listen((location, action) => {
-  if (["PUSH"].includes(action)) {
-    window.scroll({
-      behavior: "smooth",
-      top: 0
-    });
-  }
+  },
 });
 
 const startApp = async () => {
+  if (sentryDsn !== undefined) {
+    Sentry.init({
+      dsn: sentryDsn,
+      integrations: [new ApmIntegrations.Tracing()],
+      tracesSampleRate: sentrySampleRate,
+    });
+  }
+
   await persistCache({
     cache,
-    storage: window.localStorage
+    storage: window.localStorage,
   });
-  const apolloClient = new ApolloClient({
-    cache,
-    link
+
+  const notificationOptions = {
+    position: positions.BOTTOM_RIGHT,
+    timeout: 2500,
+  };
+
+  /**
+   * This is temporary adapter for queries and mutations not included in SDK to handle invalid token error for them.
+   * Note, that after all GraphQL queries and mutations will be replaced by SDK methods, this adapter is going to be removed.
+   */
+  const ApolloClientInvalidTokenLinkAdapter = ({ children }) => {
+    const tokenExpirationCallback = () => {
+      fireSignOut(apolloClient);
+    };
+
+    const { link: invalidTokenLink } = invalidTokenLinkWithTokenHandler(
+      tokenExpirationCallback
+    );
+
+    const apolloClient = React.useMemo(
+      () => createSaleorClient(apiUrl, invalidTokenLink, authLink, cache),
+      []
+    );
+
+    return children(apolloClient);
+  };
+
+  const Root = hot(module)(() => {
+    const Notifications = () => {
+      const alert = useAlert();
+
+      const { updateAvailable } = React.useContext(ServiceWorkerContext);
+
+      React.useEffect(() => {
+        if (updateAvailable) {
+          alert.show(
+            {
+              actionText: "Refresh",
+              content:
+                "To update the application to the latest version, please refresh the page!",
+              title: "New version is available!",
+            },
+            {
+              onClose: () => {
+                location.reload();
+              },
+              timeout: 0,
+              type: "success",
+            }
+          );
+        }
+      }, [updateAvailable]);
+
+      useAuth((authenticated: boolean) => {
+        if (authenticated) {
+          alert.show(
+            {
+              title: "You are now logged in",
+            },
+            { type: "success" }
+          );
+        } else {
+          alert.show(
+            {
+              title: "You are now logged out",
+            },
+            { type: "success" }
+          );
+        }
+      });
+      return null;
+    };
+
+    return (
+      <Router history={history}>
+        <QueryParamProvider ReactRouterRoute={Route}>
+          <ApolloClientInvalidTokenLinkAdapter>
+            {(apolloClient: ApolloClient<NormalizedCacheObject>) =>
+              apolloClient && (
+                <ApolloProvider client={apolloClient}>
+                  <SaleorProvider client={apolloClient}>
+                    <ShopProvider>
+                      <OverlayProvider>
+                        <App />
+                        <Notifications />
+                      </OverlayProvider>
+                    </ShopProvider>
+                  </SaleorProvider>
+                </ApolloProvider>
+              )
+            }
+          </ApolloClientInvalidTokenLinkAdapter>
+        </QueryParamProvider>
+      </Router>
+    );
   });
 
   render(
-    <Router history={history}>
-      <ApolloProvider client={apolloClient}>
-        <ShopProvider>
-          <OverlayProvider>
-            <OverlayContext.Consumer>
-              {({ show }) => (
-                <UserProviderWithTokenHandler
-                  apolloClient={apolloClient}
-                  onUserLogin={() =>
-                    show(OverlayType.message, null, {
-                      title: "You are logged in"
-                    })
-                  }
-                  onUserLogout={() =>
-                    show(OverlayType.message, null, {
-                      title: "You are logged out"
-                    })
-                  }
-                  refreshUser
-                >
-                  <UserContext.Consumer>
-                    {user => (
-                      <CheckoutProvider user={user}>
-                        <CheckoutContext.Consumer>
-                          {checkout => (
-                            <CartProvider
-                              checkout={checkout}
-                              apolloClient={apolloClient}
-                            >
-                              <Switch>
-                                <Route
-                                  path={checkoutBaseUrl}
-                                  component={CheckoutApp}
-                                />
-                                <Route component={App} />
-                              </Switch>
-                            </CartProvider>
-                          )}
-                        </CheckoutContext.Consumer>
-                      </CheckoutProvider>
-                    )}
-                  </UserContext.Consumer>
-                </UserProviderWithTokenHandler>
-              )}
-            </OverlayContext.Consumer>
-          </OverlayProvider>
-        </ShopProvider>
-      </ApolloProvider>
-    </Router>,
+    <ThemeProvider theme={defaultTheme}>
+      <AlertProvider
+        template={NotificationTemplate as any}
+        {...notificationOptions}
+      >
+        <ServiceWorkerProvider timeout={serviceWorkerTimeout}>
+          <GlobalStyle />
+          <Root />
+        </ServiceWorkerProvider>
+      </AlertProvider>
+    </ThemeProvider>,
     document.getElementById("root")
   );
-};
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js");
-}
+  // Hot Module Replacement API
+  if (module.hot) {
+    module.hot.accept();
+  }
+};
 
 startApp();

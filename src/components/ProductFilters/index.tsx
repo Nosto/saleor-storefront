@@ -2,9 +2,9 @@ import "./scss/index.scss";
 
 import * as React from "react";
 
-import { Category_attributes_edges_node } from "../../views/Category/types/Category";
-import { Collection_attributes_edges_node } from "../../views/Collection/types/Collection";
-import { SearchProducts_attributes_edges_node } from "../../views/Search/types/SearchProducts";
+import { Category_attributes_edges_node } from "../../views/Category/gqlTypes/Category";
+import { Collection_attributes_edges_node } from "../../views/Collection/gqlTypes/Collection";
+import { SearchProducts_attributes_edges_node } from "../../views/Search/gqlTypes/SearchProducts";
 import PriceRangeFilter from "../PriceRangeFilter";
 import SelectField, { SelectValue } from "../SelectField";
 
@@ -34,7 +34,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   attributes,
   filters,
   onAttributeFiltersChange,
-  onPriceChange
+  onPriceChange,
 }) => (
   <div className="product-filters">
     <div className="container">
@@ -52,7 +52,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                         );
                         return {
                           label: attributeValue.name,
-                          value: attributeValue.slug
+                          value: attributeValue.slug,
                         };
                       }
                     )
@@ -61,7 +61,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               placeholder={attribute.name}
               options={attribute.values.map(attributeValue => ({
                 label: attributeValue.name,
-                value: attributeValue.slug
+                value: attributeValue.slug,
               }))}
               isMulti
               onChange={(values: SelectValue[]) =>

@@ -1,4 +1,4 @@
-@import "../../../components/App/scss/variables.scss";
+@import "../../../globalStyles/scss/variables.scss";
 
 .search-page {
   &__header {
@@ -25,6 +25,7 @@
 
           &:focus {
             box-shadow: none;
+            color: $white;
           }
         }
       }

@@ -1,6 +1,6 @@
-@import "../../App/scss/variables.scss";
+@import "../../../globalStyles/scss/variables.scss";
 
-button {
+button.button {
   background-color: $turquoise;
   transform: $button-transform;
   padding: $button-padding;

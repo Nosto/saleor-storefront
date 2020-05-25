@@ -5,10 +5,10 @@ import {
   NavLink,
   OverlayContextInterface,
   OverlayTheme,
-  OverlayType
+  OverlayType,
 } from "..";
+import { MainMenu_shop_navigation_main_items } from "./gqlTypes/MainMenu";
 import NavItem from "./NavItem";
-import { MainMenu_shop_navigation_main_items } from "./types/MainMenu";
 
 import "./scss/index.scss";
 
@@ -46,7 +46,7 @@ class NavDropdown extends React.PureComponent<
       <ul
         className={classNames({
           "main-menu__nav-dropdown": true,
-          "main-menu__nav-dropdown--active": showDropDown
+          "main-menu__nav-dropdown--active": showDropDown,
         })}
         onMouseOver={this.showOverlayHandler}
         onMouseLeave={this.hideOverlayHandler}
@@ -57,7 +57,7 @@ class NavDropdown extends React.PureComponent<
         <li
           className={classNames({
             "main-menu__nav-dropdown__body": true,
-            "main-menu__nav-dropdown__body--visible": showDropDown
+            "main-menu__nav-dropdown__body--visible": showDropDown,
           })}
         >
           <ul>
